@@ -1,0 +1,69 @@
+ZyDAS ZD 1211 Solaris driver README file
+========================================
+[Development version]
+
+1. Driver compilation
+---------------------
+a)  Prerequisities
+    The driver requires GCC and GNU make.
+    You must have a copy of the Solaris ONNV source code repository.
+    (the Operating System/Networking consolidation sources)
+    
+b)  Makefile preparation
+    There are two variables in the Makefile you should check out.
+    - GATE must be set to the absolute path to your ONNV repository.
+    - ISA configures the target architecture ("i386" for 32-bit kernel
+      or "amd64" for 64-bit kernel).
+
+c)  Compiling the driver
+    To compile the driver use gmake (GNU Make) with thge default Makefile
+    target "all". So you can type either "gmake" or "gmake all".
+
+d)  Cleaning
+    Makefile target "clean" removes all object files and "zyd" binary file.
+
+
+
+2. Driver module installation
+-----------------------------
+The driver object file must be copied into the appropriate kernel driver
+directory ("/kernel/drv" directory for a 32-bit kernel or
+"/kernel/drv/amd64" for a 64-bit kernel.) You may also use "gmake install"
+command that will do this automatically.
+
+
+3. Adding driver to the system
+------------------------------
+If your vendor/device id is 0ace,1211 you can add/remove the driver
+just by typing
+
+$ gmake add	# add driver to the system database
+$ gmake rem	# remove driver from the system database
+
+After that you can plug the device in and it should load automatically.
+
+If your vendor/device id is different, you must either edit the makefile
+or add the driver manually:
+
+$ add_drv -n -i '"usb<vendor_id>,<device_id>"' zyd
+
+
+4. Initialization and configuration
+-----------------------------------
+When the driver is loaded and the device is attached you have to start the
+device by executing:
+
+$ ifconfig zyd0 plumb
+
+After this you may configure the device using "ifconfig" and "wificonfig" tools.
+
+Don't forget to call "ifconfig zyd0 unlplumb" before removing the device.
+
+
+5. Uninstallation
+-----------------
+If you wish to uninstall the driver, execute following commands in this order:
+
+$ gmake rem		# remove zyd from the system driver database
+$ gmake uninstall	# delete the driver file in /kernel/drv directory
+
